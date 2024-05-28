@@ -1,94 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:kata_mobile_frontui/modules/home/presenter/user_profil.dart';
 
-void main() {
+import '../modules/home/presenter/homePage.dart';
+
+
+void main() async {
+  //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.blue),
+        title: "TravelGO",
+        home: MyHome() ,
+        );
+
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-
-
-  final String title;
+class MyHome extends StatefulWidget {
+  const MyHome({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHome> createState() => _MyHomeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+class _MyHomeState extends State<MyHome> {
+  List page = [HomePage(), ProfilPage(),HomePage(), ProfilPage()];
+  int _selectedIndex = 0;
+  void _onTapItem(index) {
     setState(() {
-
-      _counter++;
+      _selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-
-        child: Column(
-
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: page[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+          backgroundColor: Color.fromRGBO(42, 21, 232, 1),
+          elevation: 0,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white,
+          currentIndex: _selectedIndex,
+          onTap: _onTapItem,
+          items: [
+            BottomNavigationBarItem(
+                label: 'Accueil',
+                icon: Icon(
+                    (_selectedIndex == 0) ? Icons.home : Icons.home_outlined),
+                backgroundColor: Color.fromRGBO(42, 21, 232, 1)),
+            BottomNavigationBarItem(
+                label: 'Notifs',
+                icon: Icon((_selectedIndex == 1)
+                    ? Icons.notifications
+                    : Icons.notifications_none),
+                backgroundColor: Color.fromRGBO(42, 21, 232, 1)),
+            BottomNavigationBarItem(
+                label: 'Favoris',
+                icon: Icon((_selectedIndex == 2)
+                    ? Icons.favorite
+                    : Icons.favorite_outline),
+                backgroundColor: Color.fromRGBO(42, 21, 232, 1)),
+            BottomNavigationBarItem(
+                label: 'Profil',
+                icon: Icon((_selectedIndex == 3)
+                    ? Icons.person
+                    : Icons.person_outline),
+                backgroundColor: Color.fromRGBO(42, 21, 232, 1)),
+          ]),
     );
   }
 }
