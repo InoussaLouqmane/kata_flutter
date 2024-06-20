@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "218781118030",
+    "project_id": "kata-814e8",
+    "storage_bucket": "kata-814e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:218781118030:android:324e714cf2358204235d1f",
+        "android_client_info": {
+          "package_name": "com.example.kata_mobile_frontui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA42oXO8MzXoEUh8wE03ko4RMSysMzpryM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

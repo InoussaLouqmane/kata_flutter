@@ -1,23 +1,47 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kata_mobile_frontui/core/constants/theme/colors.materialState.dart';
-import 'package:kata_mobile_frontui/modules/home/presenter/notifications.dart';
-import 'package:kata_mobile_frontui/modules/home/presenter/user_profil.dart';
-
-import '../modules/home/presenter/homePage.dart';
-import 'core/configs/routes.dart';
-import 'modules/auth/presenter/connexion_page.dart';
+import 'package:kata_mobile_frontui/configs/sharedpreferences.dart';
+import 'package:kata_mobile_frontui/ui/notifications.dart';
+import 'package:kata_mobile_frontui/ui/user_profil.dart';
+import 'configs/routes.dart';
+import 'constants/theme/colors.materialState.dart';
+import 'ui/homePage.dart';
+import 'ui/connexion_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
-  //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  bool authenticated = false;
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  print(fcmToken);
+
+  try {
+    String? token = await SessionService().getToken();
+    authenticated = (token != null);
+    if (authenticated) print('token found');
+
+  } catch (e) {
+    if (kDebugMode) {
+      print('token not found!');
+    }
+  }
+  runApp(MyApp(authenticated: authenticated));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool authenticated;
+  const MyApp({super.key, required this.authenticated});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Poppins',
@@ -25,7 +49,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       title: "Nothing here",
-      routerConfig: router,
+      initialRoute: (authenticated ? routeList.main : routeList.login),
+      routes: routeMap,
     );
   }
 }
@@ -38,7 +63,13 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  List page = [HomePage(), ProfilPage(), LoginPage(), NotificationPage(), HomePage()];
+  List page = [
+    HomePage(),
+    LoginPage(),
+    HomePage(),
+    NotificationPage(),
+    ProfilPage()
+  ];
   int _selectedIndex = 0;
 
   void _onTapItem(index) {
@@ -68,18 +99,17 @@ class _MyHomeState extends State<MyHome> {
           ),
           NavigationDestination(
               label: 'Cours',
-              icon: Icon(size: 25,Icons.school_outlined),
-              selectedIcon:
-                  Icon(size: 25, color: Colors.white, Icons.school)),
+              icon: Icon(size: 25, Icons.school_outlined),
+              selectedIcon: Icon(size: 25, color: Colors.white, Icons.school)),
           NavigationDestination(
               label: 'Favoris',
-              icon: Icon(size: 25,  Icons.payment_outlined),
-              selectedIcon:
-                  Icon(size: 25, color: Colors.white, Icons.payment)),
+              icon: Icon(size: 25, Icons.payment_outlined),
+              selectedIcon: Icon(size: 25, color: Colors.white, Icons.payment)),
           NavigationDestination(
             label: 'Profil',
             icon: Icon(size: 25, Icons.notifications_outlined),
-            selectedIcon: Icon(size: 25, color: Colors.white, Icons.notifications),
+            selectedIcon:
+                Icon(size: 25, color: Colors.white, Icons.notifications),
           ),
           NavigationDestination(
             label: 'Profil',
