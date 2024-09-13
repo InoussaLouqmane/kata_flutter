@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kata_mobile_frontui/Widget/SimpleLoadingButton.dart';
+import 'package:kata_mobile_frontui/Widget/Snackbars.dart';
+import 'package:kata_mobile_frontui/models/AccountRequestModel.dart';
+import 'package:kata_mobile_frontui/services/AccountRequestService.dart';
+
+import '../constants/theme/colors.materialState.dart';
 
 class AccountRequestDetailsPage extends StatefulWidget {
   const AccountRequestDetailsPage({super.key});
@@ -11,8 +15,20 @@ class AccountRequestDetailsPage extends StatefulWidget {
 }
 
 class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
+
+  String userName = '-';
+  bool validated = false ;
+
   @override
   Widget build(BuildContext context) {
+    AccountRequestModel? args = ModalRoute.of(context)!.settings.arguments as AccountRequestModel;
+    AccountRequestService accountRequestService = AccountRequestService(AccountRequest: args);
+
+
+    if (args != null){
+       userName = "${args?.firstName} + ${args?.lastName}";
+       validated =(args?.status=="Approuvé") ? true : false;
+    }
     return Scaffold(
         backgroundColor: const Color.fromRGBO(242, 243, 245, 1),
         appBar: AppBar(
@@ -26,6 +42,16 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
         body: SingleChildScrollView(
           child: Column(
             children: [
+
+              if(validated) Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(25)
+                ),
+                child: Text('Validé', style: TextStyle(color: Colors.white),),
+              ),
+
               //personal information
               Container(
               decoration: BoxDecoration(
@@ -63,18 +89,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const Divider(),
 
                   //entire name
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Nom complet',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Arsène Awounou',
+                         userName,
                         ),
                       ],
                     ),
@@ -82,18 +108,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const SizedBox(height: 5,),
                   const Divider(),
                   //mail address
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Adresse mail',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'arsenelawson@gmail.com',
+                          args?.email ?? '-',
                         ),
                       ],
                     ),
@@ -101,18 +127,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const SizedBox(height: 5,),
                   const Divider(),
                   //phone
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Téléphone',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Non défini',
+                          args?.phone ?? '-',
                         ),
                       ],
                     ),
@@ -120,18 +146,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const SizedBox(height: 5,),
                   const Divider(),
                   //Genre
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Genre',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Non défini',
+                          'Pas encore branché',
                         ),
                       ],
                     ),
@@ -139,18 +165,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const SizedBox(height: 5,),
                   const Divider(),
                   //discipline
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Discipline',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Judo',
+                          'Pas encoré branché' ,
                         ),
                       ],
                     ),
@@ -158,18 +184,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const SizedBox(height: 5,),
                   const Divider(),
                   // grade
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Grade',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Ceinture noire + 1 Dan',
+                          'Ceinture noire + ${args?.grade ?? '1'}Dan',
                         ),
                       ],
                     ),
@@ -178,18 +204,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const Divider(),
 
                   // licenseID
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Numéro de license',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'ABCDF5',
+                          args?.licenseId ?? '-',
                         ),
                       ],
                     ),
@@ -238,18 +264,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const Divider(),
 
                   //club name
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Nom du club',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Benito Karaté Club',
+                          args?.clubName ?? '-',
                         ),
                       ],
                     ),
@@ -278,18 +304,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const Divider(),
 
                   //club mail address
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Adresse mail du club',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'arsenelawson@gmail.com',
+                          args?.clubAddress ?? '-',
                         ),
                       ],
                     ),
@@ -318,18 +344,18 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
                   const Divider(),
 
                   //Adresse du club
-                  const Row(children: [
+                   Row(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(height: 5,),
-                        Text(
+                        const SizedBox(height: 5,),
+                        const Text(
                           'Adresse du Club',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Non défini',
+                            args?.clubAddress ?? '-',
                         ),
                       ],
                     ),
@@ -341,14 +367,73 @@ class _AccountRequestDetailsPageState extends State<AccountRequestDetailsPage> {
               ),
             ),
 
-              Padding(
+              if (!validated) Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Simpleloadingbutton(SenseiSelected: true, buttonContent: 'Rejeter', steps: (){})),
-                    SizedBox(width: 20,),
-                    Expanded(child: Simpleloadingbutton(SenseiSelected: true, buttonContent: 'Valider', steps: (){}))
+                     Expanded(child:
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                        WidgetStateProperty.resolveWith((states) => getRedColor(states)),
+                        shape: WidgetStateProperty.resolveWith(
+                                (states) => getBorderShape(states)),
+                      ),
+                      onPressed: () async {
+                        var status = await accountRequestService.RejectRequest();
+                        if(status == 200){
+                          ScaffoldMessenger.of(context).showSnackBar(returnSuccessSnackbar(context, 'Rejeté avec succès'));
+                          setState(() {
+                            validated = true;
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(returnErrorSnackbar(context, 'An error occured'));
+                        }
+                        setState(() {
+                          validated = true;
+                        });
+                      },
+                      child: const Text(
+                        'Rejeter',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )
+                    ),
+                    const SizedBox(width: 20,),
+                    Expanded(child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                        WidgetStateProperty.resolveWith((states) => getColor(states)),
+                        shape: WidgetStateProperty.resolveWith(
+                                (states) => getBorderShape(states)),
+                      ),
+                      onPressed: () async {
+                          var status = await accountRequestService.ValidateRequest();
+                          if(status == 200){
+                            ScaffoldMessenger.of(context).showSnackBar(returnSuccessSnackbar(context, 'Ajouté avec succès'));
+                            setState(() {
+                              validated = true;
+                            });
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(returnErrorSnackbar(context, 'An error occured'));
+                          }
+
+
+                      },
+                      child: const Text(
+                        'Valider',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ))
 
 
                   ],

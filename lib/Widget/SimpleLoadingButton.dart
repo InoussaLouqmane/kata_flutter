@@ -27,11 +27,8 @@ class _SimpleloadingbuttonState extends State<Simpleloadingbutton> {
       buttonState = !buttonState;
       if (buttonState) {
         isSpinning = true;
-
-        Future.delayed(const Duration(seconds: 2), (){
-          stopLoading();
-          widget.steps();
-        });
+        stopLoading();
+        widget.steps();
       }
     });
   }

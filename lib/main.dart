@@ -20,12 +20,13 @@ void main() async {
 
   final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
   final fcmToken = await FirebaseMessaging.instance.getToken();
-  print(fcmToken);
+  print("This is the fcm token $fcmToken");
 
   try {
     String? token = await SessionService().getToken();
     authenticated = (token != null);
     if (authenticated) print('token found');
+    else print("Sorry, authentication token not found");
 
   } catch (e) {
     if (kDebugMode) {
@@ -72,7 +73,7 @@ class _MyHomeState extends State<MyHome> {
   ];
   int _selectedIndex = 0;
 
-  void _onTapItem(index) {
+  void _onTapItem(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -81,7 +82,7 @@ class _MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: page[_selectedIndex],
+      body: page[_selectedIndex] as Widget?,
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: _onTapItem,
         selectedIndex: _selectedIndex,

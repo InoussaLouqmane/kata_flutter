@@ -10,6 +10,10 @@ Color getColor(Set<WidgetState> states) {
   return indigoClassique;
 }
 
+  Color getRedColor(Set<WidgetState> states) {
+    return Colors.red;
+  }
+
   Color getWhiteColor(Set<WidgetState> states) {
     return Colors.white;
   }

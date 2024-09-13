@@ -75,6 +75,7 @@ flutter:
     - assets/images/karate_man.png
     - assets/images/karate_boy.png
     - assets/images/message_sent.png
+    - assets/images/childrendeco.png
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see

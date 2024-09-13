@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart';
 import 'package:kata_mobile_frontui/Widget/LoadingButton.dart';
 import 'package:kata_mobile_frontui/Widget/SimpleLoadingButton.dart';
 import 'package:kata_mobile_frontui/Widget/Snackbars.dart';
 import 'package:kata_mobile_frontui/constants/theme/colors.materialState.dart';
 import 'package:kata_mobile_frontui/models/AccountRequestModel.dart';
 import 'package:kata_mobile_frontui/services/AccountRequestService.dart';
+import 'package:kata_mobile_frontui/services/disciplineService.dart';
+
+import '../models/disciplineModel.dart';
 
 class ChooseAccountPage extends StatefulWidget {
   const ChooseAccountPage({super.key});
@@ -31,9 +35,21 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
   final TextEditingController clubAddressKey = TextEditingController();
   final TextEditingController gradeKey = TextEditingController();
   final TextEditingController martialArtTypeKey = TextEditingController();
-  final String _preSelectedMartialArt = 'Karaté';
-  final String _preSelectedGrade = '1 Dan';
+  final TextEditingController genreKey = TextEditingController();
+
+
+  int _preSelectedGrade = 1;
   final AccountRequestModel demandeCreationDeCompte = AccountRequestModel();
+  final DisciplineService _disciplineService = DisciplineService();
+  List<DisciplineModel> _disciplines = [];
+  late int  _preSelectedMartialArt = 1;
+  late int _preSelectedGenre = 0;
+
+  @override
+  void initState(){
+    _fetchDiscipline();
+
+  }
 
   @override
   void dispose() {
@@ -45,8 +61,22 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
     licenseKey.dispose();
     clubNameKey.dispose();
     clubAddressKey.dispose();
+    genreKey.dispose();
+
+
 
     super.dispose();
+  }
+
+  void _fetchDiscipline() async{
+    try{
+      final disciplines = await _disciplineService.getAllDisciplines();
+      setState(() {
+        _disciplines = disciplines;
+      });
+    } catch(e){
+      returnErrorSnackbar(context, 'Failed to load disciplines : $e');
+    }
   }
 
   Future<void> _nextStep() async {
@@ -70,23 +100,31 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
         demandeCreationDeCompte.firstName = firstNameKey.text;
         demandeCreationDeCompte.lastName = lastNameKey.text;
         demandeCreationDeCompte.email = mailKey.text;
-        demandeCreationDeCompte.martialArtType = martialArtTypeKey.text;
-        demandeCreationDeCompte.grade = gradeKey.text;
+        demandeCreationDeCompte.martialArtType = _preSelectedMartialArt;
+        demandeCreationDeCompte.grade = _preSelectedGrade;
         demandeCreationDeCompte.clubName = clubNameKey.text;
         demandeCreationDeCompte.clubAddress = clubAddressKey.text;
         demandeCreationDeCompte.licenseId = licenseKey.text;
         demandeCreationDeCompte.role = (SenseiSelected) ? 'Sensei' : 'Elève';
+        demandeCreationDeCompte.phone = phoneKey.text;
+        demandeCreationDeCompte.genre = _preSelectedGenre;
 
 
-        AccountRequestService accountRequestService = AccountRequestService( AccountRequest: demandeCreationDeCompte);
-        int everyThingIsFine = await accountRequestService.sentRequest();
+        AccountRequestService accountRequestService = AccountRequestService(AccountRequest: demandeCreationDeCompte);
+        Response everyThingIsFine = await accountRequestService.sentRequest();
 
-        if(everyThingIsFine != 200){
-          ScaffoldMessenger.of(context).showSnackBar(returnErrorSnackbar(context, 'An error occured'));
+        if( everyThingIsFine.statusCode == 403){
+          ScaffoldMessenger.of(context).showSnackBar(returnErrorSnackbar(context, 'Cette adresse email est déjà liée à une demande, veuillez patienter'));
+
+        }else if(everyThingIsFine.statusCode != 201){
+          ScaffoldMessenger.of(context).showSnackBar(returnErrorSnackbar(context, 'Une erreur est survenue, veuillez réessayer ultérieurement!'));
         }
-        setState(() {
-          steps++;
-        });
+        else{
+          setState(() {
+            steps++;
+          });
+        }
+
       }
 
     } else {
@@ -439,32 +477,38 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
                   return null;
                 },
               ),
+
               const SizedBox(
                 height: 10,
               ),
-              DropdownMenu(
-                controller: martialArtTypeKey ,
-                initialSelection: _preSelectedMartialArt,
-                menuStyle: MenuStyle(
-                  shape: WidgetStateProperty.resolveWith(
-                      (states) => getBorderShape(states)),
+              TextFormField(
+                controller: phoneKey,
+                keyboardType: TextInputType.phone,
+                style: const TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(12),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  prefixIcon: Icon(
+                    Icons.phone,
+                    color: indigoClassique,
+                  ),
+                  hintText: '+229 61 00 00 00',
+                  hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w400, fontSize: 14),
+                  label: const Text('N° Téléphone',
+                      style:
+                      TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromRGBO(0, 0, 0, 0.25), width: 0.5)),
+                  border: const OutlineInputBorder(),
                 ),
-                textStyle:
-                    const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
-                label: const Text('Discipline',
-                    style:
-                        TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
-                width: MediaQuery.of(context).size.width / 1.1,
-                leadingIcon: Icon(
-                  Icons.sports_martial_arts,
-                  color: indigoClassique,
-                ),
-                dropdownMenuEntries: const <DropdownMenuEntry>[
-                  DropdownMenuEntry(value: "Karaté", label: 'Karaté'),
-                  DropdownMenuEntry(value: "Judo", label: 'Judo'),
-                  DropdownMenuEntry(value: "Kung-fu", label: 'Kung-fu'),
-                  DropdownMenuEntry(value: "Taekwondo", label: 'Taekwondo'),
-                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ce champ est requis';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(
                 height: 10,
@@ -485,7 +529,7 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
                       fontWeight: FontWeight.w400, fontSize: 14),
                   label: const Text('N° license',
                       style:
-                          TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                      TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
                   enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                           color: Color.fromRGBO(0, 0, 0, 0.25), width: 0.5)),
@@ -498,6 +542,68 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
                   return null;
                 },
               ),
+
+
+
+              const SizedBox(
+                height: 10,
+              ),
+              DropdownMenu(
+                controller: martialArtTypeKey ,
+                initialSelection: _preSelectedMartialArt,
+                  onSelected: (value){
+                    setState(() {
+                      _preSelectedMartialArt = value as int ;
+                    });
+                  },
+                menuStyle: MenuStyle(
+                  shape: WidgetStateProperty.resolveWith(
+                      (states) => getBorderShape(states)),
+                ),
+                textStyle:
+                    const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                label: const Text('Discipline',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                width: MediaQuery.of(context).size.width / 1.1,
+                leadingIcon: Icon(
+                  Icons.sports_martial_arts,
+                  color: indigoClassique,
+                ),
+                dropdownMenuEntries: _disciplines.map(
+                    (discipline) => DropdownMenuEntry(label: discipline.name, value: discipline.id,)
+                ).toList()
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              DropdownMenu(
+                  controller: genreKey ,
+                  initialSelection: _preSelectedGenre,
+                  onSelected: (value){
+                    setState(() {
+                      _preSelectedGenre = value as int;
+                    });
+                  },
+                  menuStyle: MenuStyle(
+                    shape: WidgetStateProperty.resolveWith(
+                            (states) => getBorderShape(states)),
+                  ),
+                  textStyle:
+                  const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                  label: const Text('Genre',
+                      style:
+                      TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                  width: MediaQuery.of(context).size.width / 1.1,
+                  leadingIcon: Icon(
+                    Icons.person,
+                    color: indigoClassique,
+                  ),
+                  dropdownMenuEntries:const [
+                    DropdownMenuEntry(label: 'Homme', value: 1,),
+                    DropdownMenuEntry(label: 'Femme', value: 0,)
+                  ]
+              ),
               const SizedBox(
                 height: 10,
               ),
@@ -508,6 +614,11 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
                   shape: WidgetStateProperty.resolveWith(
                       (states) => getBorderShape(states)),
                 ),
+                onSelected: (value){
+                  setState(() {
+                    _preSelectedGrade = value as int ;
+                  });
+                },
                 textStyle:
                     const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
                 label: const Text('Grade',
@@ -519,14 +630,14 @@ class _ChooseAccountPageState extends State<ChooseAccountPage> {
                   color: indigoClassique,
                 ),
                 dropdownMenuEntries: const <DropdownMenuEntry>[
-                  DropdownMenuEntry(value: "1", label: '1 Dan'),
-                  DropdownMenuEntry(value: "2", label: '2 Dan'),
-                  DropdownMenuEntry(value: "3", label: '3 Dan'),
-                  DropdownMenuEntry(value: "4", label: '4 Dan'),
-                  DropdownMenuEntry(value: "5", label: '5 Dan'),
-                  DropdownMenuEntry(value: "6", label: '6 Dan'),
-                  DropdownMenuEntry(value: "7", label: '7 Dan'),
-                  DropdownMenuEntry(value: "8", label: '8 Dan'),
+                  DropdownMenuEntry(value: 1, label: '1 Dan'),
+                  DropdownMenuEntry(value: 2, label: '2 Dan'),
+                  DropdownMenuEntry(value: 3, label: '3 Dan'),
+                  DropdownMenuEntry(value: 4, label: '4 Dan'),
+                  DropdownMenuEntry(value: 5, label: '5 Dan'),
+                  DropdownMenuEntry(value: 6, label: '6 Dan'),
+                  DropdownMenuEntry(value: 7, label: '7 Dan'),
+                  DropdownMenuEntry(value: 8, label: '8 Dan'),
                 ],
               ),
             ],

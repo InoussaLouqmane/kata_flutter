@@ -1,5 +1,7 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kata_mobile_frontui/configs/routes.dart';
 import 'package:kata_mobile_frontui/configs/sharedpreferences.dart';
 
 import '../constants/theme/colors.materialState.dart';
@@ -20,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xF2F1F6),
         body: SafeArea(
       child: Container(
         child: Column(
@@ -30,9 +33,8 @@ class _HomePageState extends State<HomePage> {
             actions: [
               IconButton(
                 onPressed: () {
-
                  sessionService.removeToken();
-                 Navigator.pop(context);
+                 Navigator.pushNamed(context, routeList.login);
                 },
                 icon: const Icon(
                   Icons.account_circle,
@@ -43,65 +45,59 @@ class _HomePageState extends State<HomePage> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child:  Column(
+            child:   Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Hi, Deodat04!',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                Text('Hi, Robert !',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 10,
                 ),
-                Container(
-                  height: 170,
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                    color: indigoClassique,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Evènements',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                    ),
-                    InkWell(
-                      child:Text('voir tout(18)',
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15,color: indigoClassique),
-                      ) ,
-                      onTap: (){},
-                    )
+                    Container(
 
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: double.maxFinite,
-                  height: 100,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (BuildContext context, int index){
-                        return Container(
-                          height: 134,
-                          width: 210,
-                          margin: const EdgeInsets.only(left: 10),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: const Color.fromRGBO(0, 0, 0, 0.1)),
-                            borderRadius: const BorderRadius.all(Radius.circular(12))
+                      width: MediaQuery.of(context).size.width * 0.43,
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.account_circle),
+                              Text('7')
+                            ],
                           ),
-                        );
-                      }),
+                          Text('Events',
+                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+
+                      width: MediaQuery.of(context).size.width * 0.43,
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.account_circle),
+                              Text('7')
+                            ],
+                          ),
+                          Text('Events',
+                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 )
-
-
-
               ],
             ),
           )

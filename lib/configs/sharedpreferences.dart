@@ -19,12 +19,16 @@ class SessionService{
     return true;
   }
 
-  onLoginSuccess(token){
+  onLoginSuccess(String token){
     saveToken(token);
     print("Saved Successfully");
   }
   onLogout(){
     removeToken();
+  }
+
+  storeUser(){
+
   }
 }
 

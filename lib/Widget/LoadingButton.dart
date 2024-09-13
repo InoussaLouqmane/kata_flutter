@@ -33,19 +33,18 @@ class _LoadingButtonState extends State<LoadingButton> {
     setState(() {
       if (widget.formKey.currentState!.validate()) {
         widget.formKey.currentState!.save();
-        print(widget.emailController.text);
-        print(widget.passwordController.text);
+
 
       buttonState = !buttonState;
       if (buttonState) {
         isSpinning = true;
         try{
-          widget.onPressed(context, widget.emailController.text, widget.passwordController.text).then((_) {
-            stopLoading();
+          widget.onPressed(context, widget.emailController.text, widget.passwordController.text).then((bool _) {
+            stopLoading(_);
           });
         } catch(e){
           ScaffoldMessenger.of(context).showSnackBar(returnErrorSnackbar(context, 'An Error has occured'));
-          stopLoading();
+          stopLoading(false);
         }
 
       }
@@ -53,12 +52,12 @@ class _LoadingButtonState extends State<LoadingButton> {
     });
   }
 
-  void stopLoading() {
+  void stopLoading(bool isAuthenticated) {
     setState(() {
       buttonState = !buttonState;
       isSpinning = !isSpinning;
     });
-    Navigator.of(context).pushNamed(routeList.main);
+    if (isAuthenticated)  Navigator.of(context).pushReplacementNamed(routeList.main);
   }
 
   @override

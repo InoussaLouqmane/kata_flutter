@@ -16,19 +16,27 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final formKey = GlobalKey<FormState>();
+
+  final loginFormKey = GlobalKey<FormState>();
+  final resetPasswordFormKey = GlobalKey<FormState>();
   final TextEditingController mailKey = TextEditingController();
   final TextEditingController passwordKey = TextEditingController();
+  final TextEditingController resetPasswordKey = TextEditingController();
+  final TextEditingController confirmPasswordKey = TextEditingController();
+
 
   @override
   void dispose() {
     mailKey.dispose();
     passwordKey.dispose();
+    resetPasswordKey.dispose();
+    confirmPasswordKey.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var selectedForm = 0;
     return Scaffold(
       body: Container(
         color: Colors.indigo.shade700,
@@ -76,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                             topLeft: Radius.circular(25),
                             topRight: Radius.circular(25))),
                     padding:
-                        const EdgeInsets.only(left: 40, right: 40, top: 10),
+                        const EdgeInsets.only(left: 20, right: 20, top: 10),
                     child: ListView.builder(
                         controller: scrollController,
                         itemCount: 1,
@@ -101,123 +109,9 @@ class _LoginPageState extends State<LoginPage> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              const Text(
-                                'Hello, Bienvenu !',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Form(
-                                key: formKey,
-                                child: Column(
-                                  children: <Widget>[
-                                    TextFormField(
-
-                                      controller: mailKey,
-                                      keyboardType: TextInputType.emailAddress,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.all(12),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.auto,
-                                        prefixIcon: Icon(
-                                          Icons.mail,
-                                          color: indigoClassique,
-                                        ),
-                                        hintText: 'Entrez votre adresse mail',
-                                        hintStyle: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14),
-                                        label: const Text(
-                                          'E-mail',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14),
-                                        ),
-                                        enabledBorder: const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    0, 0, 0, 0.25),
-                                                width: 0.5)),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.isEmpty ||
-                                            !value.contains('@')) {
-                                          return 'Adresse mail invalid';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    TextFormField(
-                                      controller: passwordKey,
-                                      keyboardType:
-                                          TextInputType.visiblePassword,
-                                      style: const TextStyle(fontSize: 16),
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.all(12),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.auto,
-                                        prefixIcon: Icon(
-                                          Icons.lock,
-                                          color: indigoClassique,
-                                        ),
-                                        hintText: 'Votre mot de passe',
-                                        hintStyle: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14),
-                                        label: const Text('Mot de passe',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 14)),
-                                        enabledBorder: const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    0, 0, 0, 0.25),
-                                                width: 0.5)),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ce champ est requis';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Mot de passe oublié?',
-                                style: TextStyle(
-                                  color: Colors.indigo.shade700,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                textAlign: TextAlign.start,
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              LoadingButton(
-                                onPressed: checkCredential,
-                                buttonContent: 'Se connecter',
-                                formKey: formKey,
-                                emailController: mailKey,
-                                passwordController: passwordKey,
-                              ),
+                              _buildLoginForm(),
                               const SizedBox(height: 10,),
-                               Row(
+                              if(selectedForm == 0) Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const Text(
@@ -228,10 +122,10 @@ class _LoginPageState extends State<LoginPage> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                   const SizedBox(width: 5,),
-                                  InkWell(
+                                   InkWell(
                                     onTap:  NavigaTo,
                                     child: const Text(
-                                    "Inscrivez-vous",
+                                      "Inscrivez-vous",
                                       style: TextStyle(
                                           color: Colors.indigo,
                                           fontSize: 12,
@@ -257,5 +151,240 @@ class _LoginPageState extends State<LoginPage> {
 
    NavigaTo(){
     Navigator.of(context).pushNamed(routeList.chooseAccount);
+  }
+
+  Widget _buildLoginForm(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Hello, Bienvenu !',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Form(
+          key: loginFormKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+
+                controller: mailKey,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  contentPadding:
+                  const EdgeInsets.all(12),
+                  floatingLabelBehavior:
+                  FloatingLabelBehavior.auto,
+                  prefixIcon: Icon(
+                    Icons.mail,
+                    color: indigoClassique,
+                  ),
+                  hintText: 'Entrez votre adresse mail',
+                  hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
+                  label: const Text(
+                    'E-mail',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromRGBO(
+                              0, 0, 0, 0.25),
+                          width: 0.5)),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      !value.contains('@')) {
+                    return 'Adresse mail invalid';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                controller: passwordKey,
+                keyboardType:
+                TextInputType.visiblePassword,
+                style: const TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  contentPadding:
+                  const EdgeInsets.all(12),
+                  floatingLabelBehavior:
+                  FloatingLabelBehavior.auto,
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: indigoClassique,
+                  ),
+                  hintText: 'Votre mot de passe',
+                  hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
+                  label: const Text('Mot de passe',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14)),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromRGBO(
+                              0, 0, 0, 0.25),
+                          width: 0.5)),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ce champ est requis';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          'Mot de passe oublié?',
+          style: TextStyle(
+            color: Colors.indigo.shade700,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        LoadingButton(
+          onPressed: checkCredential,
+          buttonContent: 'Se connecter',
+          formKey: loginFormKey,
+          emailController: mailKey,
+          passwordController: passwordKey,
+        ),
+      ],);
+  }
+
+  Widget _buildResetPassword(){
+    return Column(
+
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Réinitialisez votre mot de passe',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        Form(
+          key: resetPasswordFormKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: resetPasswordKey,
+                keyboardType:
+                TextInputType.visiblePassword,
+                style: const TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  contentPadding:
+                  const EdgeInsets.all(12),
+                  floatingLabelBehavior:
+                  FloatingLabelBehavior.auto,
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: indigoClassique,
+                  ),
+                  hintText: 'Nouveau mot de passe',
+                  hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
+                  label: const Text('Nouveau mot de passe',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14)),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromRGBO(
+                              0, 0, 0, 0.25),
+                          width: 0.5)),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ce champ est requis';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                controller: confirmPasswordKey,
+                keyboardType:
+                TextInputType.visiblePassword,
+                style: const TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  contentPadding:
+                  const EdgeInsets.all(12),
+                  floatingLabelBehavior:
+                  FloatingLabelBehavior.auto,
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: indigoClassique,
+                  ),
+                  hintText: 'Confirmer mot de passe',
+                  hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
+                  label: const Text('Confirmer mot de passe',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14)),
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromRGBO(
+                              0, 0, 0, 0.25),
+                          width: 0.5)),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ce champ est requis';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+
+        const SizedBox(
+          height: 20,
+        ),
+        LoadingButton(
+          onPressed: checkCredential,
+          buttonContent: 'Continuer',
+          formKey: resetPasswordFormKey,
+          emailController: mailKey,
+          passwordController: passwordKey,
+        ),
+      ],
+    );
   }
 }

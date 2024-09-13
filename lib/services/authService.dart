@@ -7,8 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:kata_mobile_frontui/configs/sharedpreferences.dart';
 import '../Widget/Snackbars.dart';
 import '../constants/app_strings.dart';
+import '../models/UserModel.dart';
 
-checkCredential(
+Future<bool> checkCredential(
   BuildContext context,
   String email,
   String password,
@@ -30,6 +31,7 @@ checkCredential(
 
     final decodedResponse = jsonDecode(response.body) as Map<String, dynamic>;
     if (response.statusCode == 200) {
+
       if(decodedResponse['user']['role'] == 'Admin'){
         try{
           await FirebaseMessaging.instance.subscribeToTopic("AccountRequestPending");
@@ -43,17 +45,37 @@ checkCredential(
         }
 
       }
-      sessionService.onLoginSuccess(decodedResponse['token']);
+      sessionService.onLoginSuccess(decodedResponse['token'] as String);
+
+      final User = UserModel.fromJson(decodedResponse['user'] as Map<String, dynamic>);
+
+
+
+
       ScaffoldMessenger.of(context)
-          .showSnackBar(returnSuccessSnackbar(context, decodedResponse['message']));
+          .showSnackBar(returnSuccessSnackbar(context, decodedResponse['message'] as String));
+      if(User.firstAttempt == 1) {
+        return true;
+      } else{
+        return true;
+      }
+
     }else{
       ScaffoldMessenger.of(context)
           .showSnackBar(
-          returnErrorSnackbar(context, decodedResponse['message']));
+          returnErrorSnackbar(context, decodedResponse['message'] as String));
+
+
+      return false;
     }
   }catch(e){
     ScaffoldMessenger.of(context)
         .showSnackBar(
         returnErrorSnackbar(context, "Aucune connexion internet :$e"));
+    if (kDebugMode) {
+      print(e);
+    }
+
+    return false;
   }
 }
