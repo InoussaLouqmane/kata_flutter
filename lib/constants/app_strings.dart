@@ -20,5 +20,7 @@ class AppConstants{
 
   static const String ACCOUNT_REQUEST_REJECT = "/api/ac-reject";
 
+  static const String STUDENT_BASE_URL = "/api/students";
+
 
 }

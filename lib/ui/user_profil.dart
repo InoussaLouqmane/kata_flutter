@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class ProfilPage extends StatefulWidget {
-  const ProfilPage({super.key});
+  final fetchData;
+  const ProfilPage({super.key, required this.fetchData});
   @override
   State<ProfilPage> createState() => _ProfilPageState();
 }

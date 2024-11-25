@@ -16,9 +16,11 @@ class routeList {
   static const String notificationDetails='/notifications_details';
 }
 
+
+
 Map<String, Widget Function(BuildContext context)> routeMap = {
   routeList.main : (context)=> const MyHome(),
-  routeList.homepage : (context)=> const HomePage(),
+/*  routeList.homepage : (context)=> const HomePage(fetchData: ,),*/
   routeList.login : (context)=>const LoginPage(),
   routeList.chooseAccount : (context) => const ChooseAccountPage(),
   routeList.notificationDetails: (context) => const AccountRequestDetailsPage(),

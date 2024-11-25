@@ -57,7 +57,7 @@ class _LoadingButtonState extends State<LoadingButton> {
       buttonState = !buttonState;
       isSpinning = !isSpinning;
     });
-    if (isAuthenticated)  Navigator.of(context).pushReplacementNamed(routeList.main);
+    if (isAuthenticated)  Navigator.of(context).pushReplacementNamed(routeList.main,);
   }
 
   @override

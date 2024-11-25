@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kata_mobile_frontui/Widget/loader.dart';
 import 'package:kata_mobile_frontui/configs/sharedpreferences.dart';
+import 'package:kata_mobile_frontui/services/DataService.dart';
 import 'package:kata_mobile_frontui/ui/notifications.dart';
 import 'package:kata_mobile_frontui/ui/user_profil.dart';
 import 'configs/routes.dart';
@@ -20,13 +22,22 @@ void main() async {
 
   final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
   final fcmToken = await FirebaseMessaging.instance.getToken();
-  print("This is the fcm token $fcmToken");
+  if (kDebugMode) {
+    print("This is the fcm token $fcmToken");
+  }
 
   try {
     String? token = await SessionService().getToken();
     authenticated = (token != null);
-    if (authenticated) print('token found');
-    else print("Sorry, authentication token not found");
+    if (authenticated) {
+      if (kDebugMode) {
+        print('token found');
+      }
+    } else {
+      if (kDebugMode) {
+        print("Sorry, authentication token not found");
+      }
+    }
 
   } catch (e) {
     if (kDebugMode) {
@@ -65,18 +76,52 @@ class MyHome extends StatefulWidget {
 
 class _MyHomeState extends State<MyHome> {
   List page = [
-    HomePage(),
-    LoginPage(),
-    HomePage(),
-    NotificationPage(),
-    ProfilPage()
+    HomePage()
   ];
   int _selectedIndex = 0;
+  bool isDataLoaded = false;
+  var loadedData;
 
   void _onTapItem(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    Dataservice dataserviceObject = new Dataservice();
+    try {
+
+
+
+      setState(() {
+        isDataLoaded = true;
+
+        if(isDataLoaded){
+          if (kDebugMode) {
+            print('Data has been loaded');
+          }
+        }
+        page = [
+          HomePage(),
+          LoginPage(),
+          NotificationPage(fetchData: loadedData),
+          ProfilPage(fetchData: loadedData),
+        ];
+      });
+
+      print("Everything is okay for students");
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erreur lors du chargement des données students : $e');
+      }
+    }
   }
 
   @override
@@ -88,7 +133,7 @@ class _MyHomeState extends State<MyHome> {
         selectedIndex: _selectedIndex,
         indicatorColor: indigoClassique,
         backgroundColor: Colors.white,
-        indicatorShape: CircleBorder(),
+        indicatorShape: const CircleBorder(),
         height: 62,
         elevation: 2.0,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,

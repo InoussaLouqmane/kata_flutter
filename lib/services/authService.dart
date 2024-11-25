@@ -45,11 +45,12 @@ Future<bool> checkCredential(
         }
 
       }
+
+
       sessionService.onLoginSuccess(decodedResponse['token'] as String);
 
       final User = UserModel.fromJson(decodedResponse['user'] as Map<String, dynamic>);
-
-
+      await sessionService.storeUser(User);
 
 
       ScaffoldMessenger.of(context)

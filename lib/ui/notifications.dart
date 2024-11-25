@@ -6,7 +6,8 @@ import '../Widget/SectionTitle.dart';
 import '../models/AccountRequestModel.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key});
+  final fetchData;
+  const NotificationPage({super.key, required this.fetchData});
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
@@ -19,7 +20,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     super.initState();
-    accountRequests = fetchAccountRequestList();
+    //accountRequests = fetchAccountRequestList();
   }
 
   @override
