@@ -111,8 +111,10 @@ class _MyHomeState extends State<MyHome> {
         page = [
           HomePage(),
           LoginPage(),
-          NotificationPage(fetchData: loadedData),
-          ProfilPage(fetchData: loadedData),
+          HomePage(),
+          LoginPage(),
+          /*NotificationPage(fetchData: loadedData)*/
+          ProfilePage(),
         ];
       });
 

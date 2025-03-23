@@ -1,0 +1,2 @@
+/home/louqmane/Bureau/kata_memoire/kata-mobile-frontui/android/app/.cxx/Debug/4f6u5l4r/x86/CMakeFiles/rebuild_cache.dir
+/home/louqmane/Bureau/kata_memoire/kata-mobile-frontui/android/app/.cxx/Debug/4f6u5l4r/x86/CMakeFiles/edit_cache.dir

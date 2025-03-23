@@ -1,6 +1,6 @@
 class AppConstants{
 
-  static const String SERVER_API_URL = "192.168.1.107:8000";
+  static const String SERVER_API_URL = "192.168.100.31:8000";
 
   static const requestHeader = {
     "Content-Type": "application/json",
@@ -21,6 +21,8 @@ class AppConstants{
   static const String ACCOUNT_REQUEST_REJECT = "/api/ac-reject";
 
   static const String STUDENT_BASE_URL = "/api/students";
+
+  static const String PROFIL_PAGE = "";
 
 
 }
