@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kata_mobile_frontui/models/EventModel.dart';
+import 'package:kata_mobile_frontui/models/FeesModel.dart';
+import 'package:kata_mobile_frontui/ui/eventPage.dart';
+import 'package:kata_mobile_frontui/ui/student.dart';
 
 import '../Widget/InnerPageTitle.dart';
 import '../Widget/colors.dart';
@@ -22,12 +26,16 @@ class _HomePageState extends State<HomePage> {
   final Dataservice dataservice = Dataservice();
   UserModel? currentUser;
   List<UserModel?>? studentList;
+  List<EventModel?>? eventList;
+  List<FeesModel?>? feesList;
 
   @override
   void initState() {
     super.initState();
     _initializeUser();
     _getAllStudents();
+    _getAllEvents();
+    _getAllFees();
   }
 
   Future<void> _initializeUser() async {
@@ -46,6 +54,27 @@ class _HomePageState extends State<HomePage> {
       final List<UserModel?> students = await dataservice.getAllStudents();
       setState(() {
         studentList = students;
+      });
+    } catch (e) {
+      print('Erreur lors de la récupération des étudiants : $e');
+    }
+  }
+
+  Future<void> _getAllEvents() async {
+    try {
+      final List<EventModel?> events = await dataservice.getAllEvents();
+      setState(() {
+        eventList = events;
+      });
+    } catch (e) {
+      print('Erreur lors de la récupération des étudiants : $e');
+    }
+  }
+  Future<void> _getAllFees() async {
+    try {
+      final List<FeesModel?> fees = await dataservice.getAllFees();
+      setState(() {
+        feesList = fees;
       });
     } catch (e) {
       print('Erreur lors de la récupération des étudiants : $e');
@@ -71,7 +100,8 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     onPressed: () {
                       sessionService.removeToken();
-                      Navigator.pushNamedAndRemoveUntil(context, routeList.login, (route) => false);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, routeList.login, (route) => false);
                     },
                     icon: const Icon(
                       Icons.account_circle,
@@ -88,25 +118,51 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       'Hi, ${currentUser?.firstName} !',
-                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w800, fontSize: 20),
                     ),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatCard(
-                          icon: Icons.school,
-                          color: FigmaColors.iconsBlue,
-                          value: '${studentList?.length}',
-                          label: 'Nbre d\'élèves',
-                          width: screenWidth * 0.43,
+                        // Bloc "Nombre d'élèves" cliquable
+                        GestureDetector(
+                          onTap: () {
+                            // Navigue vers la page des élèves
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    StudentsPage(students: studentList!),
+                              ),
+                            );
+                          },
+                          child: _buildStatCard(
+                            icon: Icons.school,
+                            color: FigmaColors.iconsBlue,
+                            value: '${studentList?.length}',
+                            label: 'Nbre d\'élèves',
+                            width: screenWidth * 0.43,
+                          ),
                         ),
-                        _buildStatCard(
-                          icon: Icons.event,
-                          color: FigmaColors.iconsRed,
-                          value: '8',
-                          label: 'Évènements',
-                          width: screenWidth * 0.43,
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EventsPage(events: eventList),
+                              ),
+                            );
+                          },
+                          child: _buildStatCard(
+                            icon: Icons.event,
+                            color: FigmaColors.iconsRed,
+                            value: '${eventList?.length}',
+                            label: 'Évènements',
+                            width: screenWidth * 0.43,
+                          ),
                         ),
                       ],
                     ),
@@ -124,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                         _buildStatCard(
                           icon: Icons.account_balance,
                           color: FigmaColors.iconsGreen,
-                          value: '12',
+                          value: '${feesList?.length}',
                           label: 'Paiements',
                           width: screenWidth * 0.43,
                         ),
@@ -234,7 +290,8 @@ class _HomePageState extends State<HomePage> {
           numberOfFees(title: value),
         ],
       ),
-      trailing: const Icon(Icons.chevron_right, color: FigmaColors.feesSubtitleGrey),
+      trailing:
+          const Icon(Icons.chevron_right, color: FigmaColors.feesSubtitleGrey),
       contentPadding: const EdgeInsets.all(0),
       onTap: () {
         print('Hey');

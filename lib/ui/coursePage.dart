@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:kata_mobile_frontui/Widget/colors.dart';
+import 'package:kata_mobile_frontui/Widget/Pagetitletext.dart';
+import 'package:kata_mobile_frontui/Widget/filterText.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../Widget/Pagetitletext.dart';
-import '../Widget/filterText.dart'; // Assure-toi d'avoir ce widget
+import '../Widget/YoutubeVideoPlayer.dart';
+import 'FullScreenVideo.dart'; // Importe le widget YoutubeVideoPlayer
 
 class Videopage extends StatefulWidget {
   const Videopage({super.key});
@@ -15,7 +16,7 @@ class Videopage extends StatefulWidget {
 
 class _VideopageState extends State<Videopage> {
   int filterIndex = 0;
-  final List<String> filters = ['Kata', 'Kihon', 'Kumite'];
+  final List<String> filters = ['Tous','Kata', 'Kihon', 'Kumite'];
 
   // Exemple de données pour les vidéos
   final List<Map<String, dynamic>> videos = [
@@ -30,21 +31,21 @@ class _VideopageState extends State<Videopage> {
       'title': 'Advanced Kata Techniques',
       'type': 'Kata',
       'date': '10 Sep 2024',
-      'videoUrl': 'https://www.youtube.com/watch?v=example1', // URL de la vidéo
+      'videoUrl': 'https://www.youtube.com/watch?v=g0GBz7wak2Y', // URL de la vidéo
       'description': 'Découvrez des techniques avancées pour maîtriser les Katas.',
     },
     {
       'title': 'Kihon Basics for Beginners',
       'type': 'Kihon',
       'date': '8 Sep 2024',
-      'videoUrl': 'https://www.youtube.com/watch?v=example2', // URL de la vidéo
+      'videoUrl': 'https://www.youtube.com/watch?v=g0GBz7wak2Y', // URL de la vidéo
       'description': 'Les bases du Kihon pour les débutants.',
     },
     {
       'title': 'Kumite Strategies',
       'type': 'Kumite',
       'date': '5 Sep 2024',
-      'videoUrl': 'https://www.youtube.com/watch?v=example3', // URL de la vidéo
+      'videoUrl': 'https://www.youtube.com/watch?v=g0GBz7wak2Y', // URL de la vidéo
       'description': 'Stratégies efficaces pour le Kumite.',
     },
   ];
@@ -162,6 +163,7 @@ class _VideopageState extends State<Videopage> {
   }
 
   // Carte vidéo
+  // Carte vidéo
   Widget _buildVideoCard({
     required String title,
     required String type,
@@ -169,59 +171,88 @@ class _VideopageState extends State<Videopage> {
     required String videoUrl,
     required String description,
   }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 20),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Titre de la vidéo
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+    return GestureDetector(
+      onTap: () {
+        // Navigue vers la page de la vidéo en plein écran
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoFullScreenPage(
+              videoUrl: videoUrl,
+              title: title,
             ),
-            const SizedBox(height: 4),
-            // Type et date
-            Row(
-              children: [
-                Text(
-                  type,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue, // Couleur pour le type
+          ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 20),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Titre de la vidéo
+
+              // Miniature de la vidéo (optionnelle)
+              Container(
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(videoUrl)}/0.jpg',
+                    ),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  'Ajouté le $date',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // Lecteur vidéo
-            YoutubeVideoPlayer(videoUrl: videoUrl), // Intègre la vidéo
-            const SizedBox(height: 10),
-            // Description de la vidéo
-            Text(
-              description,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+
+              const SizedBox(height: 10),
+              // Description de la vidéo
+
+              const SizedBox(height: 4),
+              // Type et date
+              Row(
+                children: [
+                  Text(
+                    type,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue, // Couleur pour le type
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Ajouté le $date',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                description,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

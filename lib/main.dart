@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kata_mobile_frontui/Widget/loader.dart';
 import 'package:kata_mobile_frontui/configs/sharedpreferences.dart';
 import 'package:kata_mobile_frontui/services/DataService.dart';
+import 'package:kata_mobile_frontui/ui/coursePage.dart';
 import 'package:kata_mobile_frontui/ui/notifications.dart';
 import 'package:kata_mobile_frontui/ui/user_profil.dart';
 import 'configs/routes.dart';
@@ -110,7 +111,7 @@ class _MyHomeState extends State<MyHome> {
         }
         page = [
           HomePage(),
-          LoginPage(),
+          Videopage(),
           HomePage(),
           LoginPage(),
           /*NotificationPage(fetchData: loadedData)*/

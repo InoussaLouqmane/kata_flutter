@@ -6,9 +6,12 @@ class FigmaColors{
   static const iconsGreen = Color(0xFF008417);
   static const iconsGrey = Color(0xFF566770);
   static const iconsPurple = Color(0xFF577AF5);
+  static const backgroundColors = Color(0xFFF2F1F6);
   static const iconsOrange = Color(0xFFFF8A00);
   static const iconsRed = Color(0xFFFF101C);
   static const dashboardNumberBlack= Color(0xFF282828);
   static const dashboardSubtitleGrey= Color(0xFF868688);
   static const feesSubtitleGrey= Color(0xFFC4C4C4);
+  static const filterColor= Color(0xff577AF5);
+
 }

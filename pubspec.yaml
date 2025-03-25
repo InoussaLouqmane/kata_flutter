@@ -46,6 +46,10 @@ dependencies:
   firebase_core: ^3.1.0
   http_interceptor: ^2.0.0-beta.8
   youtube_player_flutter: ^9.1.1
+  video_player: ^2.9.3
+  chewie: ^1.11.0
+  table_calendar: ^3.2.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +81,11 @@ flutter:
     - assets/images/karate_boy.png
     - assets/images/message_sent.png
     - assets/images/childrendeco.png
+    - assets/images/doctor.jpg
+    - assets/images/frieda.jpeg
+    - assets/images/katakid.png
+    - assets/images/marti.jpeg
+    - assets/images/mummy.jpg
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
